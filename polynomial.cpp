@@ -6,6 +6,7 @@
 
 #include "polynomial.h"
 
+
 //ADD implementation of the member functions for class Polynomial
 Polynomial::Polynomial(const int b, const double a[])
 	:Expression(), degree{ b }, coeffs{ new double[b + 1] }
@@ -18,13 +19,14 @@ Polynomial::Polynomial(const int b, const double a[])
 
 }
 
-Polynomial::Polynomial(double b)
+Polynomial::Polynomial(const double b)
 	:degree{ 0 }, coeffs{ new double[1] }
 {
 	coeffs[0] = b;
 }
 
-Polynomial::Polynomial(const Polynomial &b) 
+//Copy constructor
+Polynomial::Polynomial(const Polynomial& b)
 {
 	degree = b.degree;
 	coeffs = new double[b.degree + 1];
@@ -49,7 +51,7 @@ void Polynomial::display(std::ostream& os)const {
 	else {
 		for (int i = 0; i <= degree; i++) {
 			if (i == 0) {
-				os << coeffs[i];
+				os <<coeffs[i];
 			}
 			else if (i == 1) {
 				if (coeffs[i] == 0) {
@@ -69,14 +71,15 @@ void Polynomial::display(std::ostream& os)const {
 }
 
 Polynomial::~Polynomial() {
-	delete[] coeffs; 
+	delete[] coeffs;
 	degree = 0;
-	
+
 	coeffs = nullptr;
 
 }
 
 Polynomial& Polynomial::operator=(Polynomial b) {
+	
 	Polynomial copy{ b };
 	std::swap(coeffs, copy.coeffs);
 	std::swap(degree, copy.degree);
@@ -107,65 +110,28 @@ double Polynomial::operator()(double d)const {
 	return result;
 }
 
-Polynomial operator+(const Polynomial rhs, const Polynomial lhs) {
-	int lhs_lenght = lhs.degree + 1;
-	int rhs_lenght = rhs.degree + 1;
-	int smaler = 0;
-	bool lhs_smaler = true;
-	double* dummy_array = nullptr;
 
-	if (lhs_lenght < rhs_lenght) {
-		dummy_array = new double[rhs_lenght];
-		smaler = lhs_lenght;
+Polynomial operator+(const Polynomial lhs, const Polynomial rhs) {
+	//hur funcar dynamic alocated array. Behöver vi inte oroa oss för att hamna out of bounderies?? Växer den automatiskt?? Var
+	//vi är i this och vi får in P
+	//vi vill jämföra degrees av polynom och ta den som är störrst och antingen skapa en ny eller ändra i den vi har.
+	if (lhs.degree > rhs.degree || lhs.degree == rhs.degree) {
+		Polynomial temp = Polynomial(lhs);
+		//använd dens degree och array
+		for (int i = 0; i <= rhs.degree; i++) {
+			temp.coeffs[i] = lhs.coeffs[i] + rhs.coeffs[i];
+		}
+		return temp;
 	}
+	// this->degree < P.degree
 	else {
-		dummy_array = new double[lhs_lenght];
-		smaler = rhs_lenght;
-		lhs_smaler = false;
+		//använ P.degrees array
+		Polynomial temp = rhs;
+		for (int i = 0; i <= lhs.degree; i++) {
+			temp.coeffs[i] = lhs.coeffs[i] + rhs.coeffs[i];;
+		}
+		return temp;
 	}
-
-	if (lhs_smaler) {
-		for (int i = 0; i < rhs_lenght; i++) {
-			dummy_array[i]=rhs.coeffs[i];
-			//std::cout << dummy_array[i] << "All values in lhs";
-		}
-		for (int i = 0; i < lhs_lenght; i++) {
-			dummy_array[i] =dummy_array[i]+ lhs.coeffs[i];
-			//std::cout <<"\n"<< dummy_array[i] << "Trying to add rhs to lhs";
-		}
-		//std::cout << "lhs_smalet true ";
-		for (int i = 0; i < sizeof(dummy_array); i ++) {
-			//std::cout  << dummy_array[i]<< " " ;
-		}
-	}
-	else {
-		for (int i = 0; i < lhs_lenght; i++) {
-			dummy_array[i] = lhs.coeffs[i];
-			//std::cout << "\n" << dummy_array[i] << "All values in rhs";
-		}
-		for (int i = 0; i < rhs_lenght; i++) {
-			dummy_array[i] = dummy_array[i] + rhs.coeffs[i];
-			//std::cout << "\n" << dummy_array[i] << "Trying to add lhs to rhs";
-		}
-		//std::cout << "lhs_smalet false ";
-	}
-
-
-	Polynomial polynomial = Polynomial(sizeof(dummy_array)-1, dummy_array);
-	delete[] dummy_array;
-	dummy_array = nullptr;
-	
-	return polynomial;
-}
-
-
-bool Polynomial::isRoot(double d) const{ //Är d en lösning för ett polynom
-
-	if (std::abs((*this)(d)) < EPSILON) {
-		return true;
-	}
-
-	return std::abs((*this)(d)) < EPSILON;
 }
 
 

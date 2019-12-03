@@ -16,12 +16,14 @@ class Logarithm : public Expression
 {
 public:
 	Logarithm();
+	Logarithm(const Expression &E, const double c1, const double c2, const int b);
 
-	bool isRoot(double d) const override; //Är d en lösning för ett polynom
 	Logarithm* clone()const override; //Finns ingen constructor ( const =0 berättar detta)
 
 
 	double operator()(double d) const override; //retunerar ett värde från funktionen med insatt x (b)
+	Logarithm& operator=(Logarithm c);
+	Logarithm(const Logarithm& c);
 
 	~Logarithm(); //destruktorn
 
@@ -34,7 +36,7 @@ protected:
 
 	//ADD CODE
 private:
-	
+
 };
 
 #endif
