@@ -13,35 +13,48 @@
 
 class Polynomial : public Expression
 {
-	//ADD CODE
+    //ADD CODE
 
 public:
-	explicit Polynomial(const int b, const double a[]);
-	Polynomial(const double b);
+	 //use explicit when coverting from default
+	//constructor som tar in en int b, som står för den högsta exponentens värde, och en array som står för värde i polynomet
+	 explicit Polynomial(const int b, const double a[]); //Explicit?
 
-	Polynomial* clone() const override;
-	Polynomial(const Polynomial &b);
+	 //en konstructor som endast tar in en double som står för värdet som polynomet får.
+	 //Detta görs så att vi ska kunna addera int/double tal ihop med polynom.
+	 Polynomial(const double b);
 
+	 //Copy Constructor, gör en referering till Polynomial b och skapar en ny array med innehållet (*this) ur clone 
+	 Polynomial(const Polynomial& b);
 
-	~Polynomial(); //destruktorn
+	//Clone använder Copy constructor och skapar ett nytt Polynom utav arrayen
+	 Polynomial* clone() const override; //Finns ingen constructor ( const =0 berättar detta)
 
+	//default destructor
+	 ~Polynomial(); 
 
-	bool isRoot(double d) const override; //Är d en lösning för ett polynom
+	//Polynomial(double b);
+	//Var blir värdet för f(x), x = d i polynomet.
 	double operator()(double d) const override;
+	
+	//Vi får se vad som finns i ett visst slot i polynomet. p[]
+	double& operator[](int index); 
 
-	Polynomial& operator=(Polynomial b);
-	friend Polynomial operator+(const Polynomial rhs, const Polynomial lhs);	
-
-	double& operator[](int index);
+	//Vad var skillnaden här? Något om lhs och rhs
 	double operator[](int index)const;
+	
+	//ändrar ett polynoms värde till det i rhs polynomets värde
+	Polynomial& operator=(const Polynomial b); //???????????????????????????????????
+
+
+	friend Polynomial operator+(const Polynomial lhs, const Polynomial rhs); //????????????
 
 protected:
 	void display(std::ostream& os) const override;
-	int degree = 0;
-	double* coeffs = nullptr;
 
 private:
-	
+	int degree=0;
+	double* coeffs=nullptr;
 };
 
 
